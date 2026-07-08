@@ -7,16 +7,28 @@
       "timeout_mins": 30
     },
     {
-      "id": "stock_monitor",
-      "description": "A-share market monitor",
-      "cron_expr": "30 9 * * 1-5",
-      "timeout_mins": 45
+      "id": "code_review",
+      "description": "Review recent changes (weekdays)",
+      "cron_expr": "0 18 * * 1-5",
+      "timeout_mins": 20
     },
     {
-      "id": "evening_review",
-      "description": "Review day's progress",
-      "cron_expr": "0 21 * * *",
-      "timeout_mins": 20
+      "id": "changelog",
+      "description": "Auto changelog (Fridays)",
+      "cron_expr": "0 17 * * 5",
+      "timeout_mins": 15
+    },
+    {
+      "id": "error_digest",
+      "description": "Daily error log digest",
+      "cron_expr": "30 8 * * *",
+      "timeout_mins": 15
+    },
+    {
+      "id": "weekly_report",
+      "description": "Weekly dev report (Mondays)",
+      "cron_expr": "0 10 * * 1",
+      "timeout_mins": 25
     }
   ]
 }

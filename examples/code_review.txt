@@ -1,0 +1,12 @@
+Review the most recent changes in this repository.
+
+Steps:
+1. Run `git diff HEAD~1` to see the latest commit's changes (use `git diff --cached` if there are staged but uncommitted changes).
+2. For each meaningful change, evaluate:
+   - Potential bugs, edge cases, or logic errors
+   - Security concerns (input validation, hardcoded secrets, injection risks)
+   - Maintainability and naming
+3. Suggest concrete improvements with short code snippets where helpful.
+
+Prioritize findings by severity: CRITICAL > HIGH > MEDIUM > LOW.
+Be direct and concise. If the change looks solid, say so briefly and move on.

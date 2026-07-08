@@ -50,6 +50,26 @@ Expected output structure:
 [2026-07-08 14:24:12] END status=ok exit=0 out_chars=1523 dur_s=27
 ```
 
+## Scenario Templates
+
+5 ready-to-use prompt templates in `examples/` — copy, schedule, done.
+
+| Template | What it does | Schedule | File |
+| ---------- | ------------- | ---------- | ------ |
+| 📝 Daily summary | Summarize the latest commit's changes | Daily 09:00 | `examples/daily_summary.txt` |
+| 🔍 Code review | Review latest commit: bugs, security, style | Weekdays 18:00 | `examples/code_review.txt` |
+| 📋 Changelog | Auto changelog since last tag (Keep a Changelog) | Fridays 17:00 | `examples/changelog.txt` |
+| 🐛 Error digest | Scan `logs/` for silent-fails / timeouts / failures | Daily 08:30 | `examples/error_digest.txt` |
+| 📊 Weekly report | 200-word dev report for the team channel | Mondays 10:00 | `examples/weekly_report.txt` |
+
+All 5 are registered in `examples/jobs.json`. Try one right now:
+
+```powershell
+.\src\run.ps1 -Prompt examples\code_review.txt -Output logs\code_review.log -TimeoutMin 20
+```
+
+To schedule a template as a Windows task, see the [Setup Guide](#setup-guide) below.
+
 ## How It Works
 
 ### Core Components
