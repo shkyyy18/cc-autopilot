@@ -1,0 +1,22 @@
+{
+  "jobs": [
+    {
+      "id": "daily_summary",
+      "description": "Daily git commit summary",
+      "cron_expr": "0 9 * * *",
+      "timeout_mins": 30
+    },
+    {
+      "id": "stock_monitor",
+      "description": "A-share market monitor",
+      "cron_expr": "30 9 * * 1-5",
+      "timeout_mins": 45
+    },
+    {
+      "id": "evening_review",
+      "description": "Review day's progress",
+      "cron_expr": "0 21 * * *",
+      "timeout_mins": 20
+    }
+  ]
+}

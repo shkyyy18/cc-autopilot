@@ -1,0 +1,40 @@
+# Logs
+logs/
+*.log
+
+# State files
+rerun_state.json
+health_check.log
+
+# User-specific
+/jobs.json
+prompts/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp
+*.tmp
+*.bak
+
+# Internal docs (not for public release)
+SANITIZATION_REPORT.md
+PROJECT_SUMMARY.md

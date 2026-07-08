@@ -1,0 +1,6 @@
+Summarize today's git commits in this repository. Focus on:
+1. What files were changed
+2. What features were added or bugs fixed
+3. Any notable patterns or themes
+
+Keep the summary concise and actionable.
