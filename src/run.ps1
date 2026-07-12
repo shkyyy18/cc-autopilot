@@ -1,4 +1,4 @@
-# cc-autopilot run wrapper
+﻿# cc-autopilot run wrapper
 # Wraps Claude Code CLI with GBK encoding bypass, silent-fail detection, timeout handling.
 #
 # WHY THIS EXISTS:
@@ -66,7 +66,7 @@ try {
 # WHY this null check:
 # Process::Start returns $null when UseShellExecute=false and the binary is not found.
 # Without this guard, WaitForExit() throws NullReferenceException, crashes the script,
-# and the END line is never written — leaving a broken log (root cause: 2026-07-06 failure).
+# and the END line is never written -leaving a broken log (root cause: 2026-07-06 failure).
 if ($null -eq $proc) {
     "[$stamp] ERROR Process::Start returned null (cmd.exe not found or access denied)`r`n[$stamp] END status=error exit=-2 out_chars=0 dur_s=0" |
         Out-File -FilePath $outputFile -Encoding UTF8
@@ -86,7 +86,7 @@ $out = if (Test-Path $outTmp) { Get-Content -Path $outTmp -Raw -Encoding UTF8 } 
 $tail = if ($timedOut) { "`r`n[TIMEOUT] killed after $TimeoutMin min" } else { '' }
 
 # WHY <100 chars threshold:
-# Silent-fail: claude exited 0 but produced <100 chars — likely 0-token response (rate limit,
+# Silent-fail: claude exited 0 but produced <100 chars -likely 0-token response (rate limit,
 # quota exhausted) or claude binary absent from PATH in the schtasks execution context.
 # Real output is always >100 chars (even "I cannot do that" is ~50 chars + metadata).
 $status = if ($timedOut) { 'timeout' } elseif ($out.Length -lt 100) { 'silent-fail' } else { 'ok' }
@@ -106,3 +106,4 @@ $warn = if ($status -eq 'silent-fail') {
 "[$stamp] END status=$status exit=$exitCode out_chars=$($out.Length) dur_s=$durS" | Out-File -FilePath $outputFile -Append -Encoding UTF8
 
 Remove-Item $outTmp -Force -ErrorAction SilentlyContinue
+

@@ -1,4 +1,4 @@
-# CronHealthCheck - OS-level cron health check + stale-job rerun.
+﻿# CronHealthCheck - OS-level cron health check + stale-job rerun.
 # Scheduled by schtasks after each cron cluster to monitor and recover failed tasks.
 #
 # WHY THIS EXISTS:
@@ -43,3 +43,4 @@ if ($rerunOut -match '\[FAIL\]') {
 #>
 
 Add-Content -Path $log -Value "[$stamp] CronHealthCheck done" -Encoding UTF8
+

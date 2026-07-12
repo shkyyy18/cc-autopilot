@@ -1,4 +1,4 @@
-' ============================================================
+﻿' ============================================================
 '  Black Window Eliminator for Windows Task Scheduler
 '
 '  WHY THIS EXISTS:
@@ -24,3 +24,4 @@ Set sh = CreateObject("WScript.Shell")
 ' Second param 0 = hide window; True = wait for completion (Task Scheduler gets correct exit code)
 ec = sh.Run("cmd /c """ & script & """", 0, True)
 WScript.Quit ec
+

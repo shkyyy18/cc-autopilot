@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""cron_status — Health check for cc-autopilot scheduled tasks.
+"""cron_status -Health check for cc-autopilot scheduled tasks.
 
 Data sources:
   ./jobs.json          Job definitions (id->name/cron_expr/timeout)
@@ -368,3 +368,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
