@@ -1,10 +1,10 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import os
 import shlex
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 DEFAULT_CONFIG = "agentcron.json"
 DEFAULTS: dict[str, Any] = {
@@ -19,7 +19,7 @@ TOOL_COMMANDS = {
 }
 
 
-def find_config(explicit: str | None = None) -> Path:
+def find_config(explicit: Optional[str] = None) -> Path:
     if explicit:
         return Path(explicit).expanduser().resolve()
     env = os.environ.get("AGENTCRON_CONFIG")

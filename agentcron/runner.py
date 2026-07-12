@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import os
@@ -7,7 +7,7 @@ import subprocess
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .config import command_for
 
@@ -80,7 +80,7 @@ def run_job(job: dict[str, Any], root: Path) -> tuple[dict[str, Any], Path]:
     return result, log_path
 
 
-def read_latest(root: Path, job_id: str, log_dir: str = "logs") -> dict[str, Any] | None:
+def read_latest(root: Path, job_id: str, log_dir: str = "logs") -> Optional[dict[str, Any]]:
     directory = root / log_dir
     if not directory.exists():
         return None
