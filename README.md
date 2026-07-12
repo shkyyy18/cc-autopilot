@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # AgentCron
 
@@ -14,6 +14,8 @@ Run **Codex, Claude Code, Gemini CLI, or any command** on schedule. Detect silen
 **Windows-first · Cross-platform · Local-only · Zero runtime dependencies**
 
 </div>
+
+![AgentCron terminal dashboard](docs/assets/agentcron-demo.svg)
 
 ```text
 $ agentcron status
