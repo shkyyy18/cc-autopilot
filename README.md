@@ -97,6 +97,35 @@ Use `--tool claude`, `--tool gemini`, or `--tool custom --command "your command"
 
 Each job may override `timeout_minutes`, `min_output_chars`, `retries`, `log_dir`, `env`, or `command`.
 
+### Failure notifications
+
+Optionally configure a webhook that receives a POST when a job ends in `failed`, `timeout`, or `silent-fail`:
+
+```json
+{
+  "id": "weekly-changelog",
+  "tool": "claude",
+  "prompt": "prompts/changelog.md",
+  "cron": "0 17 * * 5",
+  "notify": {
+    "webhook_url": "https://hooks.example.com/agentcron"
+  }
+}
+```
+
+By default, the payload includes only metadata (job id, tool, status, exit code, output character count, duration, attempt number, and timestamps). The full agent output and prompt are never sent unless you explicitly opt in:
+
+```json
+"notify": {
+  "webhook_url": "https://hooks.example.com/agentcron",
+  "include_output": true,
+  "include_prompt": true,
+  "timeout": 10
+}
+```
+
+Notification failures are silently ignored and never affect the job exit status.
+
 ### Runner defaults
 
 | Tool | Default invocation |
