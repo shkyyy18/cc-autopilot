@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
@@ -49,20 +49,31 @@ def cmd_run(args, path: Path) -> int:
     return 0 if result["status"] == "ok" else 1
 
 
-def cmd_status(args, path: Path) -> int:
-    data = load_config(path)
+def _status_rows(data: dict, root: Path) -> list[dict]:
     rows = []
     for raw in data["jobs"]:
         job = get_job(data, raw["id"])
-        latest = read_latest(path.parent, raw["id"], str(job.get("log_dir", "logs")))
-        rows.append({"id": raw["id"], "tool": job.get("tool", "custom"), "cron": job.get("cron", job.get("cron_expr", "-")), "status": latest.get("status") if latest else "not-run", "last_run": latest.get("finished_at") if latest else None})
+        latest = read_latest(root, raw["id"], str(job.get("log_dir", "logs")))
+        rows.append({
+            "id": raw["id"],
+            "tool": job.get("tool", "custom"),
+            "status": latest.get("status") if latest else "not-run",
+            "schedule": job.get("cron", job.get("cron_expr", "-")),
+            "last_run": latest.get("finished_at") if latest else None,
+        })
+    return rows
+
+
+def cmd_status(args, path: Path) -> int:
+    rows = _status_rows(load_config(path), path.parent)
     if args.json:
-        print(json.dumps(rows, indent=2, ensure_ascii=False))
+        payload = {"schema_version": 1, "jobs": rows}
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
     else:
         print(f"{'JOB':24} {'TOOL':10} {'STATUS':14} {'SCHEDULE':18} LAST RUN")
         print("-" * 90)
         for row in rows:
-            print(f"{row['id'][:24]:24} {str(row['tool'])[:10]:10} {row['status']:14} {str(row['cron'])[:18]:18} {row['last_run'] or '-'}")
+            print(f"{row['id'][:24]:24} {str(row['tool'])[:10]:10} {row['status']:14} {str(row['schedule'])[:18]:18} {row['last_run'] or '-'}")
     return 1 if any(row["status"] not in {"ok", "not-run"} for row in rows) else 0
 
 
@@ -99,7 +110,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"agentcron {__version__}")
     sub = parser.add_subparsers(dest="subcommand", required=True)
     init = sub.add_parser("init", help="Create config and directories"); init.add_argument("--force", action="store_true")
-    add = sub.add_parser("add", help="Add a job"); add.add_argument("id"); add.add_argument("--tool", choices=["codex", "claude", "gemini", "custom"], default="codex"); add.add_argument("--prompt", required=True); add.add_argument("--cron", required=True); add.add_argument("--cwd", default="."); add.add_argument("--command")
+    add = sub.add_parser("add", help="Add a job"); add.add_argument("id"); add.add_argument("--tool", choices=["codex", "gemini", "custom"], default="codex"); add.add_argument("--prompt", required=True); add.add_argument("--cron", required=True); add.add_argument("--cwd", default="."); add.add_argument("--command")
     run = sub.add_parser("run", help="Run one job now"); run.add_argument("id")
     status = sub.add_parser("status", help="Show latest job health"); status.add_argument("--json", action="store_true")
     sub.add_parser("doctor", help="Check configuration and installed tools")

@@ -4,7 +4,7 @@
 
 ### Cron + watchdog for unattended AI coding agents
 
-Run **Codex, Claude Code, Gemini CLI, or any command** on schedule. Detect silent failures, retry safely, kill hung process trees, and inspect every run from one CLI.
+Run **Codex, Gemini CLI, or any command** on schedule. Detect silent failures, retry safely, kill hung process trees, and inspect every run from one CLI.
 
 [![CI](https://github.com/shkyyy18/cc-autopilot/actions/workflows/ci.yml/badge.svg)](https://github.com/shkyyy18/cc-autopilot/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/shkyyy18/cc-autopilot)](https://github.com/shkyyy18/cc-autopilot/releases/latest)
@@ -23,7 +23,7 @@ $ agentcron status
 JOB                      TOOL       STATUS         SCHEDULE           LAST RUN
 ------------------------------------------------------------------------------------------
 daily-review             codex      ok             0 18 * * 1-5       2026-07-12T18:02:41+08:00
-weekly-changelog         claude     silent-fail    0 17 * * 5         2026-07-11T17:00:09+08:00
+weekly-changelog         gemini     silent-fail    0 17 * * 5         2026-07-11T17:00:09+08:00
 ```
 
 ## Why AgentCron?
@@ -56,14 +56,14 @@ agentcron install daily-review
 agentcron status
 ```
 
-Use `--tool claude`, `--tool gemini`, or `--tool custom --command "your command"` for another runner.
+Use `--tool gemini` or `--tool custom --command "your command"` for another runner.
 
 ## What you get
 
 | Capability | Raw cron / Task Scheduler | AgentCron |
 |---|:---:|:---:|
 | Start a process on schedule | Yes | Yes |
-| Codex, Claude, Gemini, custom commands | Manual | Built in |
+| Codex, Gemini, custom commands | Manual | Built in |
 | UTF-8 prompt and output handling | Manual | Yes |
 | Timeout with process-tree cleanup | Manual | Yes |
 | Detect exit-0-but-empty responses | No | Yes |
@@ -105,7 +105,7 @@ Optionally configure a webhook that receives a POST when a job ends in `failed`,
 ```json
 {
   "id": "weekly-changelog",
-  "tool": "claude",
+  "tool": "codex",
   "prompt": "prompts/changelog.md",
   "cron": "0 17 * * 5",
   "notify": {
@@ -132,7 +132,6 @@ Notification failures are silently ignored and never affect the job exit status.
 | Tool | Default invocation |
 |---|---|
 | Codex | `codex exec -` |
-| Claude Code | `claude -p --permission-mode bypassPermissions` |
 | Gemini CLI | `gemini -p` |
 | Custom | Your explicit `command` |
 
@@ -161,6 +160,27 @@ agentcron install ID... [--all] [--dry-run]   Install scheduler entries
 
 Use a config outside the current directory with `--config PATH` or `AGENTCRON_CONFIG`.
 
+### Machine-readable health
+
+`agentcron status --json` emits a versioned, privacy-safe document for scripts and monitoring tools:
+
+```json
+{
+  "schema_version": 1,
+  "jobs": [
+    {
+      "id": "daily-review",
+      "tool": "codex",
+      "status": "ok",
+      "schedule": "0 18 * * 1-5",
+      "last_run": "2026-07-14T00:02:41+08:00"
+    }
+  ]
+}
+```
+
+The JSON never includes prompt text, command output, command arguments, environment variables, or webhook credentials. The command exits non-zero when any job is `failed`, `timeout`, or `silent-fail`, so it can be used directly in health checks.
+
 ## Failure model
 
 Every attempt ends in one explicit state:
@@ -178,7 +198,7 @@ Logs are stored as `logs/<job>-<timestamp>.log`. Each contains readable agent ou
 - **Linux/macOS:** installs standard five-field expressions into the user's `crontab`.
 - Run `agentcron install --all --dry-run` before installation to inspect generated commands.
 
-The original battle-tested PowerShell wrappers remain in [`src/`](src/) for users who need a script-only Windows setup. The new Python CLI is the recommended interface.
+The Python CLI is the supported interface. Use explicit custom commands when a tool needs non-default flags.
 
 ## Safety
 

@@ -1,10 +1,14 @@
 ﻿import json
 import sys
+from contextlib import redirect_stdout
+from io import StringIO
+from types import SimpleNamespace
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from agentcron.cli import cmd_status
 from agentcron.config import command_for, get_job, load_config, save_config
 from agentcron.notify import _send_webhook, notify_failure
 from agentcron.runner import read_latest, run_job
@@ -22,6 +26,50 @@ class ConfigTests(unittest.TestCase):
 
     def test_custom_command(self):
         self.assertEqual(command_for({"tool": "custom", "command": ["python", "task.py"]}), ["python", "task.py"])
+
+
+class StatusTests(unittest.TestCase):
+    def test_json_output_has_stable_privacy_safe_shape(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "agentcron.json"
+            save_config(path, {
+                "jobs": [{
+                    "id": "daily-review",
+                    "tool": "custom",
+                    "command": [sys.executable, "-c", "print('secret-command')"],
+                    "prompt": "private-prompt.md",
+                    "cron": "0 18 * * 1-5",
+                    "env": {"SECRET_TOKEN": "do-not-leak"},
+                }]
+            })
+            output = StringIO()
+            with redirect_stdout(output):
+                code = cmd_status(SimpleNamespace(json=True), path)
+            payload = json.loads(output.getvalue())
+            self.assertEqual(code, 0)
+            self.assertEqual(payload["schema_version"], 1)
+            self.assertEqual(payload["jobs"], [{
+                "id": "daily-review",
+                "tool": "custom",
+                "status": "not-run",
+                "schedule": "0 18 * * 1-5",
+                "last_run": None,
+            }])
+            rendered = output.getvalue()
+            self.assertNotIn("secret-command", rendered)
+            self.assertNotIn("private-prompt", rendered)
+            self.assertNotIn("do-not-leak", rendered)
+
+    def test_json_output_supports_an_empty_job_list(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "agentcron.json"
+            save_config(path, {"jobs": []})
+            output = StringIO()
+            with redirect_stdout(output):
+                code = cmd_status(SimpleNamespace(json=True), path)
+            self.assertEqual(code, 0)
+            self.assertEqual(json.loads(output.getvalue()), {"schema_version": 1, "jobs": []})
 
 
 class RunnerTests(unittest.TestCase):

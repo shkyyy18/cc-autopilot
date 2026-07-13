@@ -14,7 +14,6 @@ DEFAULTS: dict[str, Any] = {
 }
 TOOL_COMMANDS = {
     "codex": ["codex", "exec", "-"],
-    "claude": ["claude", "-p", "--permission-mode", "bypassPermissions"],
     "gemini": ["gemini", "-p"],
 }
 

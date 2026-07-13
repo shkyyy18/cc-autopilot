@@ -1,8 +1,17 @@
-﻿{
+{
   "version": 1,
-  "defaults": {"timeout_minutes": 30, "min_output_chars": 80, "retries": 1},
+  "defaults": {
+    "timeout_minutes": 30,
+    "min_output_chars": 80,
+    "retries": 1
+  },
   "jobs": [
-    {"id": "daily-review", "tool": "codex", "prompt": "prompts/daily-review.md", "cwd": ".", "cron": "0 18 * * 1-5"},
-    {"id": "weekly-changelog", "tool": "claude", "prompt": "prompts/weekly-changelog.md", "cwd": ".", "cron": "0 17 * * 5"}
+    {
+      "id": "daily-summary",
+      "tool": "codex",
+      "prompt": "daily_summary.txt",
+      "cwd": "..",
+      "cron": "0 9 * * *"
+    }
   ]
 }

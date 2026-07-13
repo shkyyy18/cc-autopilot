@@ -23,14 +23,14 @@
       <text x="34" y="92" fill="#64748b">JOB</text><text x="350" y="92" fill="#64748b">TOOL</text><text x="510" y="92" fill="#64748b">STATUS</text><text x="726" y="92" fill="#64748b">SCHEDULE</text>
       <line x1="34" y1="112" x2="1014" y2="112" stroke="#263244"/>
       <text x="34" y="154" fill="#e2e8f0">daily-review</text><text x="350" y="154" fill="#93c5fd">codex</text><text x="510" y="154" fill="#6ee7b7">● ok</text><text x="726" y="154" fill="#cbd5e1">0 18 * * 1-5</text>
-      <text x="34" y="202" fill="#e2e8f0">weekly-changelog</text><text x="350" y="202" fill="#c4b5fd">claude</text><text x="510" y="202" fill="#fbbf24">● retrying</text><text x="726" y="202" fill="#cbd5e1">0 17 * * 5</text>
+      <text x="34" y="202" fill="#e2e8f0">weekly-changelog</text><text x="350" y="202" fill="#c4b5fd">custom</text><text x="510" y="202" fill="#fbbf24">● retrying</text><text x="726" y="202" fill="#cbd5e1">0 17 * * 5</text>
       <text x="34" y="250" fill="#e2e8f0">security-scan</text><text x="350" y="250" fill="#67e8f9">gemini</text><text x="510" y="250" fill="#6ee7b7">● ok</text><text x="726" y="250" fill="#cbd5e1">30 8 * * *</text>
       <text x="34" y="318" fill="#64748b">$</text><text x="60" y="318" fill="#f8fafc">agentcron run daily-review</text>
       <text x="34" y="352" fill="#6ee7b7">[ok]</text><text x="88" y="352" fill="#94a3b8">exit=0  chars=2841  duration=42.7s  retries=0</text>
     </g>
   </g>
   <g transform="translate(76 575)" font-family="Inter,Segoe UI,sans-serif" font-size="17" fill="#94a3b8">
-    <text>Codex</text><circle cx="74" cy="-6" r="3" fill="#475569"/><text x="90">Claude Code</text><circle cx="205" cy="-6" r="3" fill="#475569"/><text x="221">Gemini CLI</text><circle cx="324" cy="-6" r="3" fill="#475569"/><text x="340">custom commands</text>
+    <text>Codex</text><circle cx="74" cy="-6" r="3" fill="#475569"/><text x="90">Gemini CLI</text><circle cx="196" cy="-6" r="3" fill="#475569"/><text x="212">custom commands</text>
     <text x="754" fill="#6ee7b7">zero runtime dependencies</text>
   </g>
 </svg>

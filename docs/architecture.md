@@ -1,4 +1,4 @@
-﻿# Architecture
+# Architecture
 
 ```text
 agentcron.json + prompt.md
@@ -6,7 +6,7 @@ agentcron.json + prompt.md
           v
    AgentCron CLI  <---- agentcron doctor / status
           |
-          +---- runner adapter: Codex | Claude | Gemini | custom
+          +---- runner adapter: Codex | Gemini | custom
           |
           +---- timeout + process-tree kill
           +---- silent-output detection
@@ -18,4 +18,4 @@ agentcron.json + prompt.md
 Task Scheduler (Windows) / cron (Linux & macOS) invokes `agentcron run <job>`.
 ```
 
-AgentCron deliberately stays outside the agent runtime. It does not replace Codex, Claude Code, or Gemini CLI; it makes unattended invocations observable and recoverable.
+AgentCron deliberately stays outside the agent runtime. It does not replace Codex or Gemini CLI; it makes unattended invocations observable and recoverable.

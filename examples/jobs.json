@@ -1,34 +1,11 @@
 {
   "jobs": [
     {
-      "id": "daily_summary",
-      "description": "Daily git commit summary",
-      "cron_expr": "0 9 * * *",
-      "timeout_mins": 30
-    },
-    {
-      "id": "code_review",
-      "description": "Review recent changes (weekdays)",
-      "cron_expr": "0 18 * * 1-5",
-      "timeout_mins": 20
-    },
-    {
-      "id": "changelog",
-      "description": "Auto changelog (Fridays)",
-      "cron_expr": "0 17 * * 5",
-      "timeout_mins": 15
-    },
-    {
-      "id": "error_digest",
-      "description": "Daily error log digest",
-      "cron_expr": "30 8 * * *",
-      "timeout_mins": 15
-    },
-    {
-      "id": "weekly_report",
-      "description": "Weekly dev report (Mondays)",
-      "cron_expr": "0 10 * * 1",
-      "timeout_mins": 25
+      "id": "daily-summary",
+      "tool": "codex",
+      "prompt": "daily_summary.txt",
+      "cwd": "..",
+      "cron_expr": "0 9 * * *"
     }
   ]
 }
