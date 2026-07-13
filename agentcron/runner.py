@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from .config import command_for
+from .notify import notify_failure
 
 
 def _now() -> str:
@@ -44,6 +45,7 @@ def run_job(job: dict[str, Any], root: Path) -> tuple[dict[str, Any], Path]:
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     log_path = log_dir / f"{job_id}-{stamp}.log"
     result: dict[str, Any] = {}
+    last_output = ""
     for attempt in range(1, retries + 2):
         started = time.monotonic()
         started_at = _now()
@@ -64,6 +66,7 @@ def run_job(job: dict[str, Any], root: Path) -> tuple[dict[str, Any], Path]:
             exit_code = -1
         duration = round(time.monotonic() - started, 2)
         text = output.decode("utf-8", errors="replace")
+        last_output = text
         status = "timeout" if timed_out else "failed" if exit_code != 0 else "silent-fail" if len(text.strip()) < min_chars else "ok"
         result = {"job": job_id, "tool": job.get("tool", "custom"), "command": command, "status": status,
                   "exit_code": exit_code, "output_chars": len(text), "duration_seconds": duration,
@@ -77,6 +80,17 @@ def run_job(job: dict[str, Any], root: Path) -> tuple[dict[str, Any], Path]:
         if status == "ok" or attempt > retries:
             break
         time.sleep(min(5 * attempt, 15))
+    notify_config = job.get("notify")
+    if notify_config and result.get("status") != "ok":
+        prompt_text = ""
+        if notify_config.get("include_prompt"):
+            try:
+                prompt_text = prompt.decode("utf-8", errors="replace")
+            except Exception:
+                prompt_text = ""
+        notify_failure(result, notify_config,
+                       output_text=last_output,
+                       prompt_text=prompt_text)
     return result, log_path
 
 

@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from agentcron.config import command_for, get_job, load_config, save_config
+from agentcron.notify import _send_webhook, notify_failure
 from agentcron.runner import read_latest, run_job
 from agentcron.scheduler import _windows_schedule
 
@@ -45,6 +46,76 @@ class RunnerTests(unittest.TestCase):
 class SchedulerTests(unittest.TestCase):
     def test_weekdays(self):
         self.assertEqual(_windows_schedule("0 18 * * 1-5"), ["/SC", "WEEKLY", "/D", "MON,TUE,WED,THU,FRI", "/ST", "18:00"])
+
+
+class NotifyTests(unittest.TestCase):
+    def test_noop_when_no_config(self):
+        result = {"job": "test", "status": "failed", "exit_code": 1,
+                  "output_chars": 0, "duration_seconds": 1.0,
+                  "attempt": 1, "started_at": "", "finished_at": ""}
+        notify_failure(result, None, output_text="output", prompt_text="prompt")
+        # Should not raise; nothing to assert beyond no error.
+
+    def test_noop_when_ok_status(self):
+        result = {"job": "test", "status": "ok", "exit_code": 0,
+                  "output_chars": 100, "duration_seconds": 1.0,
+                  "attempt": 1, "started_at": "", "finished_at": ""}
+        config = {"webhook_url": "http://example.com/hook"}
+        notify_failure(result, config, output_text="output", prompt_text="prompt")
+        # No webhook sent for ok status.
+
+    @patch("agentcron.notify.urllib.request.urlopen")
+    def test_webhook_sent_on_failure(self, mock_urlopen):
+        result = {"job": "test", "tool": "codex", "status": "failed",
+                  "exit_code": 1, "output_chars": 10, "duration_seconds": 2.5,
+                  "attempt": 2, "started_at": "2026-01-01T00:00:00+00:00",
+                  "finished_at": "2026-01-01T00:01:00+00:00"}
+        config = {"webhook_url": "http://example.com/hook"}
+        notify_failure(result, config, output_text="some output", prompt_text="some prompt")
+        mock_urlopen.assert_called_once()
+        call_args = mock_urlopen.call_args[0][0]
+        payload = json.loads(call_args.data)
+        self.assertEqual(payload["job"], "test")
+        self.assertEqual(payload["status"], "failed")
+        self.assertNotIn("output", payload)
+        self.assertNotIn("prompt", payload)
+
+    @patch("agentcron.notify.urllib.request.urlopen")
+    def test_webhook_includes_output_when_configured(self, mock_urlopen):
+        result = {"job": "test", "status": "timeout",
+                  "exit_code": -1, "output_chars": 0, "duration_seconds": 30.0,
+                  "attempt": 1, "started_at": "", "finished_at": ""}
+        config = {"webhook_url": "http://example.com/hook", "include_output": True}
+        notify_failure(result, config, output_text="agent output", prompt_text="")
+        payload = json.loads(mock_urlopen.call_args[0][0].data)
+        self.assertEqual(payload["output"], "agent output")
+
+    @patch("agentcron.notify.urllib.request.urlopen")
+    def test_webhook_includes_prompt_when_configured(self, mock_urlopen):
+        result = {"job": "test", "status": "silent-fail",
+                  "exit_code": 0, "output_chars": 5, "duration_seconds": 1.0,
+                  "attempt": 1, "started_at": "", "finished_at": ""}
+        config = {"webhook_url": "http://example.com/hook", "include_prompt": True}
+        notify_failure(result, config, output_text="", prompt_text="the prompt")
+        payload = json.loads(mock_urlopen.call_args[0][0].data)
+        self.assertEqual(payload["prompt"], "the prompt")
+
+    @patch("agentcron.notify.urllib.request.urlopen", side_effect=OSError("network down"))
+    def test_notification_failure_does_not_raise(self, mock_urlopen):
+        result = {"job": "test", "status": "failed",
+                  "exit_code": 1, "output_chars": 0, "duration_seconds": 1.0,
+                  "attempt": 1, "started_at": "", "finished_at": ""}
+        config = {"webhook_url": "http://example.com/hook"}
+        # Must not raise; notification failure is silently ignored.
+        notify_failure(result, config, output_text="", prompt_text="")
+
+    @patch("agentcron.notify.urllib.request.urlopen")
+    def test_send_webhook_returns_true_on_success(self, mock_urlopen):
+        self.assertTrue(_send_webhook("http://example.com/hook", {"key": "val"}))
+
+    @patch("agentcron.notify.urllib.request.urlopen", side_effect=OSError("down"))
+    def test_send_webhook_returns_false_on_error(self, mock_urlopen):
+        self.assertFalse(_send_webhook("http://example.com/hook", {"key": "val"}))
 
 
 if __name__ == "__main__":
