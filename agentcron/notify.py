@@ -3,19 +3,24 @@ from __future__ import annotations
 import json
 import urllib.request
 from typing import Any
+from urllib.parse import urlsplit
 
 
 def _send_webhook(url: str, payload: dict[str, Any], timeout: int = 10) -> bool:
+    parsed = urlsplit(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        return False
+    timeout = min(60, max(1, int(timeout)))
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(
         url, data=data,
-        headers={"Content-Type": "application/json; charset=utf-8"},
+        headers={"Content-Type": "application/json; charset=utf-8", "User-Agent": "AgentCron/0.3"},
         method="POST",
     )
     try:
         with urllib.request.urlopen(req, timeout=timeout):
             return True
-    except Exception:
+    except (OSError, ValueError):
         return False
 
 

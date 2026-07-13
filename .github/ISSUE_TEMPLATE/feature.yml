@@ -1,0 +1,17 @@
+name: Feature request
+description: Propose a focused AgentCron improvement
+title: "[Feature] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Failure mode or workflow
+      description: Describe the unattended-agent problem, not only the desired implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Security and platform considerations
+    validations:
+      required: true

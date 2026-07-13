@@ -118,5 +118,17 @@ class NotifyTests(unittest.TestCase):
         self.assertFalse(_send_webhook("http://example.com/hook", {"key": "val"}))
 
 
+class NotificationSecurityTests(unittest.TestCase):
+    def test_non_http_webhook_is_rejected(self):
+        self.assertFalse(_send_webhook("file:///tmp/leak", {"status": "failed"}))
+
+    @patch("agentcron.notify.urllib.request.urlopen")
+    def test_webhook_has_bounded_timeout_and_user_agent(self, mock_urlopen):
+        self.assertTrue(_send_webhook("https://example.com/hook", {"status": "failed"}, timeout=999))
+        request = mock_urlopen.call_args[0][0]
+        self.assertEqual(mock_urlopen.call_args.kwargs["timeout"], 60)
+        self.assertEqual(request.get_header("User-agent"), "AgentCron/0.3")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,7 @@
 Run **Codex, Claude Code, Gemini CLI, or any command** on schedule. Detect silent failures, retry safely, kill hung process trees, and inspect every run from one CLI.
 
 [![CI](https://github.com/shkyyy18/cc-autopilot/actions/workflows/ci.yml/badge.svg)](https://github.com/shkyyy18/cc-autopilot/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/shkyyy18/cc-autopilot)](https://github.com/shkyyy18/cc-autopilot/releases/latest)
 [![Python](https://img.shields.io/badge/python-3.9%2B-3776AB)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Zero dependencies](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen)](pyproject.toml)
@@ -164,10 +165,10 @@ Use a config outside the current directory with `--config PATH` or `AGENTCRON_CO
 
 Every attempt ends in one explicit state:
 
-- `ok` — exit code 0 and output meets the configured minimum;
-- `silent-fail` — exit code 0 but output is suspiciously short;
-- `failed` — non-zero exit code or launch failure;
-- `timeout` — deadline exceeded; the process tree was terminated.
+- `ok` - exit code 0 and output meets the configured minimum;
+- `silent-fail` - exit code 0 but output is suspiciously short;
+- `failed` - non-zero exit code or launch failure;
+- `timeout` - deadline exceeded; the process tree was terminated;
 
 Logs are stored as `logs/<job>-<timestamp>.log`. Each contains readable agent output plus machine-readable JSON event lines. Prompts, logs, configs, and credentials are ignored by Git by default.
 
@@ -197,6 +198,20 @@ See [architecture](docs/architecture.md), [roadmap](ROADMAP.md), [changelog](CHA
 ## Built from real failures
 
 This project grew out of thousands of unattended Windows agent runs: silent 0-token responses, GBK/UTF-8 corruption, orphaned child processes, hidden Task Scheduler failures, and black console windows. The goal is simple: **scheduled agents should be boring to operate.**
+
+## Contributing
+
+Small, focused contributions are welcome. Useful first paths include:
+
+- add fixture-backed scheduler behavior for another platform;
+- improve `doctor` diagnostics for a real installation failure;
+- add a privacy-safe notification adapter;
+- add reproducible failure cases and regression tests;
+- improve documentation for a supported agent CLI.
+
+Open an issue before adding network services or changing runner security defaults. Fork the repository, work on a focused branch, and open a pull request; direct write access is not required. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+The v0.3 webhook notification adapter began as the project's first external pull request. Contributors are reviewed through isolated CI and credited in the changelog.
 
 ## License
 
