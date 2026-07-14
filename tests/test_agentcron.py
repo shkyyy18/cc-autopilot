@@ -95,6 +95,14 @@ class SchedulerTests(unittest.TestCase):
     def test_weekdays(self):
         self.assertEqual(_windows_schedule("0 18 * * 1-5"), ["/SC", "WEEKLY", "/D", "MON,TUE,WED,THU,FRI", "/ST", "18:00"])
 
+    def test_named_weekday_is_normalized(self):
+        self.assertEqual(_windows_schedule("0 18 * * mon"), ["/SC", "WEEKLY", "/D", "MON", "/ST", "18:00"])
+
+    def test_invalid_weekday_tokens_are_rejected(self):
+        for weekday in ("8", "FUNDAY", "5-1", "1-5-2"):
+            with self.subTest(weekday=weekday), self.assertRaisesRegex(ValueError, "Windows weekday"):
+                _windows_schedule(f"0 18 * * {weekday}")
+
 
 class NotifyTests(unittest.TestCase):
     def test_noop_when_no_config(self):

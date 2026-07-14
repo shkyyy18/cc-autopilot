@@ -209,6 +209,11 @@ Logs are stored as `logs/<job>-<timestamp>.log`. Each contains readable agent ou
 - **Linux/macOS:** installs standard five-field expressions into the user's `crontab`.
 - Run `agentcron install --all --dry-run` before installation to inspect generated commands.
 
+On Windows, the weekday field accepts numeric values `0`–`7` (`0` and `7` mean Sunday),
+the three-letter names `SUN` through `SAT` (case-insensitive), comma-separated values, and
+ascending numeric ranges such as `1-5`. Other cron features are rejected because Task
+Scheduler installation is limited to fixed-time daily or weekly jobs.
+
 The Python CLI is the supported interface. Use explicit custom commands when a tool needs non-default flags.
 
 ## Safety
