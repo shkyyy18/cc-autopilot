@@ -58,6 +58,17 @@ agentcron status
 
 Use `--tool gemini` or `--tool custom --command "your command"` for another runner.
 
+## Choose a proven workflow
+
+| Goal | Start here | Proof of success |
+|---|---|---|
+| Run a daily repository review on Windows | [Windows recipe](docs/recipes.md#recipe-1-daily-repository-review-on-windows) | Manual run is `ok`, then the scheduled entry appears in Task Scheduler |
+| Generate a weekly changelog on Linux/macOS | [cron recipe](docs/recipes.md#recipe-2-weekly-changelog-on-linux-or-macos) | Dry-run command is correct and a local run produces a readable log |
+| Feed health into another script or dashboard | [JSON health recipe](docs/recipes.md#recipe-3-monitor-health-from-another-script) | `status --json` is parseable and returns non-zero for unhealthy jobs |
+| Use another local runner | [custom command recipe](docs/recipes.md#recipe-4-run-a-non-codex-command) | The explicit command runs with bounded timeout and local logging |
+
+The [ten-minute evaluation checklist](docs/recipes.md#ten-minute-evaluation-checklist) is the fastest way to decide whether AgentCron fits your environment.
+
 ## What you get
 
 | Capability | Raw cron / Task Scheduler | AgentCron |
@@ -213,7 +224,7 @@ python -m pip install -e .
 python -m unittest discover -s tests -v
 ```
 
-See [architecture](docs/architecture.md), [roadmap](ROADMAP.md), [changelog](CHANGELOG.md), and [contributing guide](CONTRIBUTING.md).
+See [operating recipes](docs/recipes.md), [architecture](docs/architecture.md), [roadmap](ROADMAP.md), [changelog](CHANGELOG.md), [first outside contribution case study](docs/first-contribution-case-study.md), and the [contributing guide](CONTRIBUTING.md).
 
 ## Built from real failures
 
@@ -221,7 +232,7 @@ This project grew out of thousands of unattended Windows agent runs: silent 0-to
 
 ## Contributing
 
-Small, focused contributions are welcome. Useful first paths include:
+Small, focused contributions are welcome. Browse the [open good-first-issue queue](https://github.com/shkyyy18/cc-autopilot/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) or start with one of these paths:
 
 - add fixture-backed scheduler behavior for another platform;
 - improve `doctor` diagnostics for a real installation failure;
