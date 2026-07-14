@@ -1,0 +1,5 @@
+# m h  dom mon dow   command
+# nightly database backup (managed by ops, not AgentCron)
+0 3 * * * /usr/bin/backup.sh
+@reboot /opt/app/start.sh
+30 2 * * 0 /usr/local/bin/cleanup --all

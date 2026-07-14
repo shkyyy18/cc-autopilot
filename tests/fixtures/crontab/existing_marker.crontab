@@ -1,0 +1,4 @@
+# personal reminder, keep me
+0 9 * * * /usr/bin/reminder
+0 9 * * 1-5 /old/python -m agentcron --config /old/agentcron.json run daily-review # agentcron:daily-review
+15 6 * * * /usr/bin/other-task
