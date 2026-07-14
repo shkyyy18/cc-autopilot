@@ -34,3 +34,18 @@ A useful first issue should contain:
 6. a clear statement of what is out of scope.
 
 The project will continue to use this format for community tasks. See the open `good first issue` queue or start a Discussion with a real unattended-agent failure you want to make reproducible.
+
+## The pattern repeated
+
+On July 14, 2026, a second outside author completed pull request #10 for the fixture-backed Unix crontab merge regression task.
+
+The issue deliberately made the boundaries verifiable:
+
+- no production behavior change;
+- no access to the contributor's real crontab;
+- preserve unrelated entries and other AgentCron jobs;
+- replace the owned marker exactly once and remain idempotent;
+- cover empty crontabs, shell quoting, dry-run behavior, and write failures;
+- run entirely offline.
+
+The complete diff was reviewed and the full suite reproduced 28 passing tests before merge. This second contribution is stronger evidence that the format is reusable, although it does not yet prove repeat usage or commercial demand.
