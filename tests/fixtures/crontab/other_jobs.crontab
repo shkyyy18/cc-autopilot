@@ -1,0 +1,5 @@
+# unrelated ops entry
+0 3 * * * /usr/bin/backup.sh
+0 8 * * 1-5 /usr/bin/python -m agentcron --config /cfg/agentcron.json run morning-brief # agentcron:morning-brief
+0 9 * * 1-5 /old/python -m agentcron --config /old/agentcron.json run daily-review # agentcron:daily-review
+0 20 * * * /usr/bin/python -m agentcron --config /cfg/agentcron.json run nightly-digest # agentcron:nightly-digest
