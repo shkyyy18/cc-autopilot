@@ -22,9 +22,11 @@ Run **Codex, Gemini CLI, or any command** on schedule. Detect silent failures, r
 $ agentcron status
 JOB                      TOOL       STATUS         SCHEDULE           LAST RUN
 ------------------------------------------------------------------------------------------
-daily-review             codex      ok             0 18 * * 1-5       2026-07-12T18:02:41+08:00
-weekly-changelog         gemini     silent-fail    0 17 * * 5         2026-07-11T17:00:09+08:00
+daily-review             custom     ok             0 18 * * 1-5       2026-07-20T07:33:52+08:00
+weekly-changelog         custom     silent-fail    0 17 * * 5         2026-07-20T07:34:03+08:00
 ```
+
+*Output captured from a real run on Windows (see [Verified demo](#verified-demo)).*
 
 ## Why AgentCron?
 
@@ -57,6 +59,71 @@ agentcron status
 ```
 
 Use `--tool gemini` or `--tool custom --command "your command"` for another runner.
+
+## Verified demo
+
+The transcript below was captured from a real run on Windows 11 with Python 3.14. It needs no agent CLI installed: both jobs use `--tool custom`, and the second job deliberately prints a four-character response so you can watch AgentCron catch an exit-0-but-empty run.
+
+```text
+$ agentcron init
+Created C:\demo\agentcron.json
+
+$ agentcron add daily-review --tool custom --prompt prompts/daily-review.md --cron "0 18 * * 1-5"
+Added daily-review; edit C:\demo\prompts\daily-review.md
+```
+
+Each demo job then points at a local stand-in for the agent CLI in `agentcron.json`:
+
+```json
+{
+  "id": "daily-review",
+  "tool": "custom",
+  "command": ["python", "-c", "print('Reviewed 12 files across the repository; no blocking issues found. Summary written to report.')"],
+  "prompt": "prompts/daily-review.md",
+  "cron": "0 18 * * 1-5"
+}
+```
+
+```text
+$ agentcron run daily-review
+[ok] daily-review attempt=1 exit=0 chars=95 duration=0.04s
+log: C:\demo\logs\daily-review-20260720-073352.log
+
+$ agentcron run weekly-changelog
+[silent-fail] weekly-changelog attempt=2 exit=0 chars=4 duration=0.04s
+log: C:\demo\logs\weekly-changelog-20260720-073358.log
+```
+
+The job exited 0, produced almost nothing, was retried once, and still ended up flagged — exactly the failure mode a raw scheduler cannot see. `agentcron status` then exits non-zero so the unhealthy job breaks your monitoring:
+
+```text
+$ agentcron status
+JOB                      TOOL       STATUS         SCHEDULE           LAST RUN
+------------------------------------------------------------------------------------------
+daily-review             custom     ok             0 18 * * 1-5       2026-07-20T07:33:52+08:00
+weekly-changelog         custom     silent-fail    0 17 * * 5         2026-07-20T07:34:03+08:00
+(exit code 1)
+
+$ agentcron install --all --dry-run
+schtasks /Create /F /TN AgentCron-daily-review /TR "C:\Python314\python.exe -m agentcron --config C:\demo\agentcron.json run daily-review" /SC WEEKLY /D MON,TUE,WED,THU,FRI /ST 18:00
+schtasks /Create /F /TN AgentCron-weekly-changelog /TR "C:\Python314\python.exe -m agentcron --config C:\demo\agentcron.json run weekly-changelog" /SC WEEKLY /D FRI /ST 17:00
+
+$ agentcron doctor
+OK   Python       3.14.3
+OK   Config       C:\demo\agentcron.json
+OK   Scheduler    schtasks
+```
+
+The regression suite is dependency-free and runs in about a tenth of a second:
+
+```text
+$ python -m unittest discover -s tests
+..............................
+----------------------------------------------------------------------
+Ran 30 tests in 0.102s
+
+OK
+```
 
 ## Choose a proven workflow
 
@@ -181,10 +248,17 @@ Use a config outside the current directory with `--config PATH` or `AGENTCRON_CO
   "jobs": [
     {
       "id": "daily-review",
-      "tool": "codex",
+      "tool": "custom",
       "status": "ok",
       "schedule": "0 18 * * 1-5",
-      "last_run": "2026-07-14T00:02:41+08:00"
+      "last_run": "2026-07-20T07:33:52+08:00"
+    },
+    {
+      "id": "weekly-changelog",
+      "tool": "custom",
+      "status": "silent-fail",
+      "schedule": "0 17 * * 5",
+      "last_run": "2026-07-20T07:34:03+08:00"
     }
   ]
 }
