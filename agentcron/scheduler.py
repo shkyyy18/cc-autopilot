@@ -8,6 +8,49 @@ from pathlib import Path
 from typing import Any
 
 
+_WINDOWS_WEEKDAY_BY_NUMBER = {
+    0: "SUN",
+    1: "MON",
+    2: "TUE",
+    3: "WED",
+    4: "THU",
+    5: "FRI",
+    6: "SAT",
+    7: "SUN",
+}
+_WINDOWS_WEEKDAY_NAMES = frozenset(_WINDOWS_WEEKDAY_BY_NUMBER.values())
+
+
+def _windows_weekday_token(token: str) -> str:
+    normalized = token.strip().upper()
+    if normalized in _WINDOWS_WEEKDAY_NAMES:
+        return normalized
+    if normalized.isdigit():
+        value = int(normalized)
+        if value in _WINDOWS_WEEKDAY_BY_NUMBER:
+            return _WINDOWS_WEEKDAY_BY_NUMBER[value]
+    raise ValueError(
+        f"Invalid Windows weekday token {token!r}; expected 0-7 or "
+        "SUN, MON, TUE, WED, THU, FRI, SAT."
+    )
+
+
+def _windows_weekday_range(token: str) -> list[str]:
+    bounds = [part.strip() for part in token.split("-")]
+    if len(bounds) != 2 or not all(part.isdigit() for part in bounds):
+        raise ValueError(
+            f"Invalid Windows weekday range {token!r}; use numeric endpoints like 1-5."
+        )
+    start, end = (int(part) for part in bounds)
+    if start not in _WINDOWS_WEEKDAY_BY_NUMBER or end not in _WINDOWS_WEEKDAY_BY_NUMBER:
+        raise ValueError(
+            f"Invalid Windows weekday range {token!r}; endpoints must be between 0 and 7."
+        )
+    if start > end:
+        raise ValueError(f"Invalid Windows weekday range {token!r}; range must ascend.")
+    return [_WINDOWS_WEEKDAY_BY_NUMBER[value] for value in range(start, end + 1)]
+
+
 def _windows_schedule(cron: str) -> list[str]:
     parts = cron.split()
     if len(parts) != 5:
@@ -18,14 +61,12 @@ def _windows_schedule(cron: str) -> list[str]:
     time_value = f"{int(hour):02d}:{int(minute):02d}"
     if weekday == "*":
         return ["/SC", "DAILY", "/ST", time_value]
-    mapping = {"0": "SUN", "1": "MON", "2": "TUE", "3": "WED", "4": "THU", "5": "FRI", "6": "SAT", "7": "SUN"}
     days: list[str] = []
     for token in weekday.split(","):
         if "-" in token:
-            start, end = map(int, token.split("-", 1))
-            days.extend(mapping[str(i)] for i in range(start, end + 1))
+            days.extend(_windows_weekday_range(token))
         else:
-            days.append(mapping.get(token.upper(), token.upper()))
+            days.append(_windows_weekday_token(token))
     return ["/SC", "WEEKLY", "/D", ",".join(days), "/ST", time_value]
 
 
