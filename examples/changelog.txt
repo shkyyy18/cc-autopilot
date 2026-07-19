@@ -1,0 +1,23 @@
+Generate a changelog entry for this repository since the last tag.
+
+Steps:
+1. Run `git describe --tags --abbrev=0` to find the latest tag.
+2. Run `git log <last-tag>..HEAD --oneline` to list commits since that tag.
+3. Group commits by type using Conventional Commits prefixes:
+   - feat:      -> Added
+   - fix:       -> Fixed
+   - refactor:  -> Changed
+   - docs:      -> Documentation
+   - chore/test/ci: -> Internal
+4. Write a Keep a Changelog style entry.
+
+Output format:
+## [Unreleased] - <today's date>
+### Added
+- ...
+### Fixed
+- ...
+### Changed
+- ...
+
+Keep entries user-facing. Drop purely internal chores unless significant.

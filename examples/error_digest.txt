@@ -1,0 +1,16 @@
+Scan the log files in ./logs/ for problems from the last 24 hours.
+
+Steps:
+1. List all *.log files in ./logs/ modified in the last 24 hours.
+2. For each, look for the structured END line and flag these states:
+   - status=silent-fail   (the configured agent produced too little output - likely quota, launch, or PATH failure)
+   - status=timeout       (killed after timeout)
+   - status=failed        (no END line / crashed)
+3. For any non-OK job, read the log body and guess the likely root cause.
+4. Count occurrences per job.
+
+Output a concise digest:
+- Healthy jobs: just a count.
+- Problem jobs: job id, how many times, last error, suspected cause, suggested fix.
+
+If everything is healthy, output exactly: "All jobs OK in the last 24h."

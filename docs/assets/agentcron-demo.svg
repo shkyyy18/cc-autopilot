@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">AgentCron terminal dashboard</title>
+  <desc id="desc">Cron and watchdog for unattended AI coding agents</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#111827"/></linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#6ee7b7"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="24" flood-opacity=".35"/></filter>
+  </defs>
+  <rect width="1200" height="630" rx="28" fill="url(#bg)"/>
+  <circle cx="1030" cy="80" r="190" fill="#2563eb" opacity=".08"/><circle cx="120" cy="600" r="240" fill="#10b981" opacity=".07"/>
+  <g transform="translate(76 68)">
+    <circle cx="34" cy="34" r="31" fill="none" stroke="url(#brand)" stroke-width="6"/>
+    <path d="M34 16v20l14 9" fill="none" stroke="#e5e7eb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="84" y="45" fill="#f8fafc" font-family="Inter,Segoe UI,sans-serif" font-size="48" font-weight="750">AgentCron</text>
+    <text x="370" y="43" fill="#94a3b8" font-family="Inter,Segoe UI,sans-serif" font-size="24">reliable scheduled AI agents</text>
+  </g>
+  <g transform="translate(76 164)" filter="url(#shadow)">
+    <rect width="1048" height="382" rx="18" fill="#050b14" stroke="#263244" stroke-width="2"/>
+    <rect width="1048" height="50" rx="18" fill="#111827"/><rect y="34" width="1048" height="16" fill="#111827"/>
+    <circle cx="28" cy="25" r="7" fill="#fb7185"/><circle cx="52" cy="25" r="7" fill="#fbbf24"/><circle cx="76" cy="25" r="7" fill="#34d399"/>
+    <text x="94" y="31" fill="#64748b" font-family="Consolas,monospace" font-size="16">agentcron status</text>
+    <g font-family="Consolas,monospace" font-size="20">
+      <text x="34" y="92" fill="#64748b">JOB</text><text x="350" y="92" fill="#64748b">TOOL</text><text x="510" y="92" fill="#64748b">STATUS</text><text x="726" y="92" fill="#64748b">SCHEDULE</text>
+      <line x1="34" y1="112" x2="1014" y2="112" stroke="#263244"/>
+      <text x="34" y="154" fill="#e2e8f0">daily-review</text><text x="350" y="154" fill="#93c5fd">codex</text><text x="510" y="154" fill="#6ee7b7">● ok</text><text x="726" y="154" fill="#cbd5e1">0 18 * * 1-5</text>
+      <text x="34" y="202" fill="#e2e8f0">weekly-changelog</text><text x="350" y="202" fill="#c4b5fd">custom</text><text x="510" y="202" fill="#fbbf24">● retrying</text><text x="726" y="202" fill="#cbd5e1">0 17 * * 5</text>
+      <text x="34" y="250" fill="#e2e8f0">security-scan</text><text x="350" y="250" fill="#67e8f9">gemini</text><text x="510" y="250" fill="#6ee7b7">● ok</text><text x="726" y="250" fill="#cbd5e1">30 8 * * *</text>
+      <text x="34" y="318" fill="#64748b">$</text><text x="60" y="318" fill="#f8fafc">agentcron run daily-review</text>
+      <text x="34" y="352" fill="#6ee7b7">[ok]</text><text x="88" y="352" fill="#94a3b8">exit=0  chars=2841  duration=42.7s  retries=0</text>
+    </g>
+  </g>
+  <g transform="translate(76 575)" font-family="Inter,Segoe UI,sans-serif" font-size="17" fill="#94a3b8">
+    <text>Codex</text><circle cx="74" cy="-6" r="3" fill="#475569"/><text x="90">Gemini CLI</text><circle cx="196" cy="-6" r="3" fill="#475569"/><text x="212">custom commands</text>
+    <text x="754" fill="#6ee7b7">zero runtime dependencies</text>
+  </g>
+</svg>

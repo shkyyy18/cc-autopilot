@@ -1,0 +1,12 @@
+Generate a weekly development report for this repository.
+
+Steps:
+1. Run `git log --since="7 days ago" --pretty=format:"%h %ad %s" --date=short` to get this week's commits.
+2. Run `git diff --shortstat <commit-7-days-ago>..HEAD` for totals (commits, files, insertions, deletions).
+3. Summarize:
+   - Major themes and progress this week
+   - Notable features or fixes shipped
+   - Any open issues or TODOs mentioned in commit messages
+4. Suggest 2-3 focus areas for next week based on patterns you see.
+
+Keep the whole report under 200 words. Tone: clear and suitable for posting to a team channel.
