@@ -64,12 +64,27 @@ def get_job(data: dict[str, Any], job_id: str) -> dict[str, Any]:
     raise KeyError(f"Unknown job: {job_id}")
 
 
+def _split_command(command: str) -> list[str]:
+    if os.name == "nt":
+        # shlex with posix=False keeps surrounding quotes in the tokens,
+        # which subprocess then passes through literally (issue #12).
+        # Strip one matched pair of quotes from each token.
+        parts = shlex.split(command, posix=False)
+        return [
+            part[1:-1]
+            if len(part) >= 2 and part[0] == part[-1] and part[0] in "\"'"
+            else part
+            for part in parts
+        ]
+    return shlex.split(command)
+
+
 def command_for(job: dict[str, Any]) -> list[str]:
     command = job.get("command")
     if command:
         if isinstance(command, list):
             return [str(part) for part in command]
-        return shlex.split(str(command), posix=os.name != "nt")
+        return _split_command(str(command))
     tool = str(job.get("tool", "custom")).lower()
     if tool not in TOOL_COMMANDS:
         raise ValueError(f"Tool '{tool}' needs an explicit command.")
