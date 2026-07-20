@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from agentcron.cli import cmd_status
-from agentcron.config import command_for, get_job, load_config, save_config
+from agentcron.config import _split_command, command_for, get_job, load_config, save_config
 from agentcron.notify import _send_webhook, notify_failure
 from agentcron.runner import read_latest, run_job
 from agentcron.scheduler import _windows_schedule
@@ -26,6 +26,20 @@ class ConfigTests(unittest.TestCase):
 
     def test_custom_command(self):
         self.assertEqual(command_for({"tool": "custom", "command": ["python", "task.py"]}), ["python", "task.py"])
+
+    def test_quoted_command_string_leaves_no_quotes(self):
+        # Regression for issue #12: quoted command strings must not keep
+        # surrounding quotes after splitting (Windows posix=False shlex).
+        parts = command_for({"tool": "custom", "command": 'python "my script.py" --flag'})
+        self.assertEqual(parts, ["python", "my script.py", "--flag"])
+        for part in parts:
+            self.assertNotIn('"', part)
+
+    def test_windows_split_strips_matched_quotes(self):
+        with patch("agentcron.config.os.name", "nt"):
+            self.assertEqual(_split_command('python "my script.py"'), ["python", "my script.py"])
+            self.assertEqual(_split_command("python 'my script.py'"), ["python", "my script.py"])
+            self.assertEqual(_split_command('python plain.py'), ["python", "plain.py"])
 
 
 class StatusTests(unittest.TestCase):
